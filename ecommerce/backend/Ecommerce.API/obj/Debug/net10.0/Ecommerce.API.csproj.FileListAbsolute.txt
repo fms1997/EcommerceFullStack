@@ -130,13 +130,3 @@ C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\De
 C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Caching.Abstractions.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Caching.Memory.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Configuration.Abstractions.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.DependencyInjection.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Logging.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Options.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\bin\Debug\net10.0\Microsoft.Extensions.Primitives.dll
-C:\Users\Franc\Desktop\EcommerceFullStack\ecommerce\backend\Ecommerce.API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

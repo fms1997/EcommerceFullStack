@@ -36,10 +36,19 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <p className="text-2xl font-bold">${product.price.toFixed(2)}</p>
             <p className="text-sm text-gray-600">Stock disponible: {product.stock}</p>
           </div>
-
+{/* 
           <button type="button" className="rounded-md bg-black px-4 py-2 text-white">
             Agregar al carrito
-          </button>
+          </button> */}
+           <AddToCartButton
+            product={{
+              id: product.id,
+              slug: product.slug,
+              name: product.name,
+              price: product.price,
+              stock: product.stock,
+            }}
+          />
         </div>
       </article>
     </main>

@@ -166,12 +166,23 @@ export function CatalogPageClient() {
                     <h2 className="line-clamp-2 text-lg font-semibold">{product.name}</h2>
                     <p className="line-clamp-2 text-sm text-gray-600">{product.description ?? "Sin descripción disponible."}</p>
                     <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
-                    <Link
-                      href={`/catalogo/${product.slug}`}
-                      className="inline-block rounded-md bg-black px-4 py-2 text-sm text-white"
-                    >
-                      Ver detalle
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/catalogo/${product.slug}`}
+                        className="inline-block rounded-md border px-4 py-2 text-sm"
+                      >
+                        Ver detalle
+                      </Link>
+                      <AddToCartButton
+                        product={{
+                          id: product.id,
+                          slug: product.slug,
+                          name: product.name,
+                          price: product.price,
+                          stock: product.stock,
+                        }}
+                      />
+                    </div>
                   </div>
                 </article>
               );

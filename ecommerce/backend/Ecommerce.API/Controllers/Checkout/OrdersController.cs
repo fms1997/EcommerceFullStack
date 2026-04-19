@@ -1,16 +1,19 @@
 ﻿using Ecommerce.API.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
 namespace Ecommerce.API.Controllers.Checkout;
 
 [ApiController]
 [Route("api/checkout/orders")]
+[Authorize]
 public class OrdersController(EcommerceDbContext dbContext) : ControllerBase
 {
     [HttpPost]
+
     public async Task<ActionResult<CreateOrderResponse>> Create(
         [FromBody] CreateOrderRequest request,
         CancellationToken cancellationToken = default)

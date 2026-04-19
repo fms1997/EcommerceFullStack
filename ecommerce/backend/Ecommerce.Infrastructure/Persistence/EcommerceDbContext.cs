@@ -15,7 +15,7 @@ public class EcommerceDbContext : DbContext
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-
+    public DbSet<User> Users => Set<User>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -43,7 +43,35 @@ public class EcommerceDbContext : DbContext
             entity.HasIndex(x => x.Name);
             entity.HasIndex(x => x.Slug).IsUnique();
         });
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("users");
 
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.FullName)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(x => x.Email)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(x => x.PasswordHash)
+                .IsRequired();
+
+            entity.Property(x => x.Role)
+                .IsRequired()
+                .HasMaxLength(30);
+
+            entity.Property(x => x.IsActive)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAtUtc)
+                .IsRequired();
+
+            entity.HasIndex(x => x.Email).IsUnique();
+        });
         modelBuilder.Entity<Product>(entity =>
         {
             entity.ToTable("products");

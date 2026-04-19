@@ -6,4 +6,27 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+// });
+});
+
+apiClient.interceptors.request.use((config) => {
+  if (typeof window === "undefined") {
+    return config;
+  }
+
+  const raw = window.localStorage.getItem("ecommerce_auth_session");
+  if (!raw) {
+    return config;
+  }
+
+  try {
+    const session = JSON.parse(raw) as { token?: string };
+    if (session.token) {
+      config.headers.Authorization = `Bearer ${session.token}`;
+    }
+  } catch {
+    window.localStorage.removeItem("ecommerce_auth_session");
+  }
+
+  return config;
 });

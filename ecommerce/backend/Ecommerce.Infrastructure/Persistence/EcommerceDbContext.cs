@@ -107,5 +107,78 @@ public class EcommerceDbContext : DbContext
                 .HasForeignKey(x => x.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.ToTable("Orders");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Status)
+                .IsRequired();
+
+            entity.Property(x => x.TotalAmount)
+                .HasColumnType("numeric(18,2)")
+                .IsRequired();
+
+            entity.Property(x => x.ShippingFullName)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(x => x.ShippingAddressLine1)
+                .IsRequired()
+                .HasMaxLength(250);
+
+            entity.Property(x => x.ShippingCity)
+                .IsRequired()
+                .HasMaxLength(120);
+
+            entity.Property(x => x.ShippingState)
+                .IsRequired()
+                .HasMaxLength(120);
+
+            entity.Property(x => x.ShippingPostalCode)
+                .IsRequired()
+                .HasMaxLength(30);
+
+            entity.Property(x => x.ShippingCountry)
+                .IsRequired()
+                .HasMaxLength(120);
+
+            entity.Property(x => x.ShippingPhone)
+                .HasMaxLength(30);
+
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.Orders)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(x => x.UserId);
+            entity.HasIndex(x => x.CreatedAtUtc);
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.ToTable("OrderItems");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.UnitPrice)
+                .HasColumnType("numeric(18,2)")
+                .IsRequired();
+
+            entity.Property(x => x.LineTotal)
+                .HasColumnType("numeric(18,2)")
+                .IsRequired();
+
+            entity.HasOne(x => x.Order)
+                .WithMany(x => x.Items)
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Product)
+                .WithMany(x => x.OrderItems)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }

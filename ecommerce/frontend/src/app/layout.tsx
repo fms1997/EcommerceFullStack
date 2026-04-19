@@ -38,6 +38,7 @@ export default function RootLayout({
                  <Link href="/" className="font-semibold text-slate-900">
                     Ecommerce
                   </Link>
+                  
                 {/* </div>
               </nav>
             </header>  
@@ -51,6 +52,9 @@ export default function RootLayout({
                     </Link>
                     <Link href="/carrito" className="hover:text-slate-700 hover:underline">
                       Carrito
+                    </Link>
+                     <Link href="/ordenes" className="hover:text-slate-700 hover:underline">
+                      Mis compras
                     </Link>
                     <Link href="/login" className="hover:text-slate-700 hover:underline">
                       Login

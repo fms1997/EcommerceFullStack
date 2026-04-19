@@ -33,9 +33,9 @@ export default function RootLayout({
                     Carrito */}
                       <AuthProvider>
             <CartProvider>
-              <header className="border-b bg-white">
+                            <header className="border-b bg-white text-slate-900">
                 <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-                  <Link href="/" className="font-semibold">
+                 <Link href="/" className="font-semibold text-slate-900">
                     Ecommerce
                   </Link>
                 {/* </div>
@@ -45,14 +45,14 @@ export default function RootLayout({
             {children}
           </CartProvider>*/}
 
- <div className="flex items-center gap-4 text-sm">
-                    <Link href="/catalogo" className="hover:underline">
+  <div className="flex items-center gap-4 text-sm text-slate-900">
+                    <Link href="/catalogo" className="hover:text-slate-700 hover:underline">
                       Catálogo
                     </Link>
-                    <Link href="/carrito" className="hover:underline">
+                    <Link href="/carrito" className="hover:text-slate-700 hover:underline">
                       Carrito
                     </Link>
-                    <Link href="/login" className="hover:underline">
+                    <Link href="/login" className="hover:text-slate-700 hover:underline">
                       Login
                     </Link>
                   </div>

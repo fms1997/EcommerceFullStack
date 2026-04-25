@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/modules/catalogo/services/catalog-service";
 import { AddToCartButton } from "@/modules/catalogo/components/add-to-cart-button";
+import Image from "next/image";
  type ProductDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -22,8 +23,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       </Link>
 
       <article className="grid gap-6 rounded-xl border p-6 md:grid-cols-2">
-        <img src={product.image ?? "https://placehold.co/800x600?text=Producto"} alt={product.name} className="h-72 w-full rounded-lg object-cover" />
+        {/* <img src={product.image ?? "https://placehold.co/800x600?text=Producto"} alt={product.name} className="h-72 w-full rounded-lg object-cover" /> */}
 
+<Image
+          src={product.image ?? "https://placehold.co/800x600?text=Producto"}
+          alt={product.name}
+          width={800}
+          height={600}
+          className="h-72 w-full rounded-lg object-cover"
+        />
         <div className="space-y-4">
           <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs">
             {product.categoryName}

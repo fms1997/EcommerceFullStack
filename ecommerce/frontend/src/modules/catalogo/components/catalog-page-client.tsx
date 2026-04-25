@@ -7,6 +7,7 @@ import { FormEvent } from "react";
 import { getCategories, getProducts } from "../services/catalog-service";
 import { apiClient } from "@/lib/api/api-client";
 import { AddToCartButton } from "@/modules/catalogo/components/add-to-cart-button";
+import Image from "next/image";
 const PAGE_SIZE = 6;
 
 export function CatalogPageClient() {
@@ -158,8 +159,13 @@ export function CatalogPageClient() {
             {result.products.map((product) => {
               return (
                 <article key={product.id} className="overflow-hidden rounded-xl border">
-                  <img src={product.image ?? "https://placehold.co/600x400?text=Producto"} alt={product.name} className="h-44 w-full object-cover" />
-                  <div className="space-y-2 p-4">
+  <Image
+                    src={product.image ?? "https://placehold.co/600x400?text=Producto"}
+                    alt={product.name}
+                    width={600}
+                    height={400}
+                    className="h-44 w-full object-cover"
+                  />                  <div className="space-y-2 p-4">
                     <span className="inline-block rounded-full bg-gray-100 px-2 py-1 text-xs">
                       {product.categoryName}
                     </span>

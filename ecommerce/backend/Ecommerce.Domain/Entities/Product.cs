@@ -13,5 +13,6 @@ public class Product : BaseEntity
 
     public Guid CategoryId { get; set; }
     public Category Category { get; set; } = null!;
+    public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

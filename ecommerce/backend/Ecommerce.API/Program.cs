@@ -1,4 +1,3 @@
-using System.Text;
 using Ecommerce.API.Middleware;
 using Ecommerce.API.Options;
 using Ecommerce.API.Services;
@@ -6,9 +5,13 @@ using Ecommerce.Infrastructure;
 using Ecommerce.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -41,7 +44,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+builder.Logging.AddJsonConsole(); 
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -71,7 +74,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.AddSingleton<RequestMetricsStore>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -107,7 +110,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var remoteIp = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var path = context.Request.Path.Value?.ToLowerInvariant() ?? string.Empty;
+
+        var permitLimit = 100;
+        var window = TimeSpan.FromMinutes(1);
+
+        if (path.StartsWith("/api/auth"))
+        {
+            permitLimit = 10;
+        }
+        else if (path.StartsWith("/api/checkout"))
+        {
+            permitLimit = 30;
+        }
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            $"{remoteIp}:{path}",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                Window = window,
+                QueueLimit = 0,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                AutoReplenishment = true
+            });
+    });
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

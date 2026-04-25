@@ -1,6 +1,14 @@
-﻿namespace Ecommerce.API.Middleware
+﻿namespace Ecommerce.API.Middleware;
+
+public sealed class SecurityHeadersMiddleware(RequestDelegate next)
 {
-    public class SecurityHeadersMiddleware
+    public async Task InvokeAsync(HttpContext context)
     {
+        context.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
+        context.Response.Headers.TryAdd("X-Frame-Options", "DENY");
+        context.Response.Headers.TryAdd("Referrer-Policy", "strict-origin-when-cross-origin");
+        context.Response.Headers.TryAdd("X-XSS-Protection", "0");
+
+        await next(context);
     }
 }

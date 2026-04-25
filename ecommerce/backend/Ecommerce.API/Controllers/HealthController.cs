@@ -1,21 +1,22 @@
-﻿namespace Ecommerce.API.Middleware;
-
+﻿using Microsoft.AspNetCore.Mvc;
+namespace Ecommerce.API.Controllers;
 public sealed class CorrelationIdMiddleware(RequestDelegate next)
 {
     public const string HeaderName = "X-Correlation-Id";
 
-    public async Task InvokeAsync(HttpContext context)
+    [ApiController]
+    [Route("api/health")]
+    public sealed class HealthController : ControllerBase
     {
-        var correlationId = context.Request.Headers[HeaderName].FirstOrDefault();
-
-        if (string.IsNullOrWhiteSpace(correlationId))
+        [HttpGet]
+        public IActionResult Get()
         {
-            correlationId = Guid.NewGuid().ToString("N");
+            return Ok(new
+            {
+                status = "ok",
+                service = "Ecommerce.API",
+                timestampUtc = DateTime.UtcNow
+            });
         }
-
-        context.TraceIdentifier = correlationId;
-        context.Response.Headers[HeaderName] = correlationId;
-
-        await next(context);
     }
 }

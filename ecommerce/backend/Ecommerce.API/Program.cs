@@ -1,5 +1,4 @@
 using System.Text;
-using Ecommerce.API.Extensions;
 using Ecommerce.API.Middleware;
 using Ecommerce.API.Options;
 using Ecommerce.API.Services;
@@ -7,11 +6,9 @@ using Ecommerce.Infrastructure;
 using Ecommerce.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
- using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -112,8 +109,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-pp.UseGlobalExceptionHandling();
-app.UseMiddleware<RequestLoggingMiddleware>();
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<EcommerceDbContext>();

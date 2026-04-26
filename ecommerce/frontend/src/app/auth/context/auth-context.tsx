@@ -1,7 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { AuthUser } from "@/modules/auth/types";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import type { AuthUser } from "@/modules/auth/types";
 
 type AuthState = {
   token: string;
@@ -19,7 +26,10 @@ type AuthContextValue = {
 };
 
 const AUTH_STORAGE_KEY = "ecommerce_auth_session";
-const AUTH_SESSION_CHANGED_EVENT = "auth-session-changed";
+
+// 👇 ESTE ES EL FIX CLAVE
+export const authSessionChangedEvent = "auth-session-changed";
+
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -29,8 +39,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
+
       if (raw) {
         const parsed = JSON.parse(raw) as AuthState;
+
         if (new Date(parsed.expiresAtUtc).getTime() > Date.now()) {
           setSessionState(parsed);
         } else {
@@ -45,12 +57,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function setSession(state: AuthState) {
     setSessionState(state);
     window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state));
-    window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT));  }
+
+    // 👇 usar el export
+    window.dispatchEvent(new Event(authSessionChangedEvent));
+  }
 
   function logout() {
     setSessionState(null);
     window.localStorage.removeItem(AUTH_STORAGE_KEY);
-    window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT));  }
+
+    // 👇 usar el export
+    window.dispatchEvent(new Event(authSessionChangedEvent));
+  }
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -61,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession,
       logout,
     }),
-    [session, isLoading],
+    [session, isLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -69,10 +87,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth debe usarse dentro de AuthProvider");
   }
+
   return context;
 }
 
+// 👇 ya lo tenías bien
 export const authStorageKey = AUTH_STORAGE_KEY;

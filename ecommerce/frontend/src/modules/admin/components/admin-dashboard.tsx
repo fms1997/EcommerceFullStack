@@ -6,6 +6,7 @@ import {
   createAdminProduct,
   deleteAdminCategory,
   deleteAdminProduct,
+  generateProductCopy,
   getAdminCategories,
   getAdminOrders,
   getAdminProducts,
@@ -40,6 +41,10 @@ export function AdminDashboard() {
   const queryClient = useQueryClient();
   const [categoryForm, setCategoryForm] = useState(INITIAL_CATEGORY_FORM);
   const [productForm, setProductForm] = useState(INITIAL_PRODUCT_FORM);
+
+  // IA fields
+  const [productFeaturesInput, setProductFeaturesInput] = useState("");
+  const [seoTitle, setSeoTitle] = useState("");
 
   const categoriesQuery = useQuery({ queryKey: ["admin-categories"], queryFn: getAdminCategories });
   const productsQuery = useQuery({ queryKey: ["admin-products"], queryFn: getAdminProducts });
@@ -81,6 +86,8 @@ export function AdminDashboard() {
     mutationFn: createAdminProduct,
     onSuccess: () => {
       setProductForm((prev) => ({ ...INITIAL_PRODUCT_FORM, categoryId: prev.categoryId }));
+      setProductFeaturesInput("");
+      setSeoTitle("");
       refreshAll();
     },
   });
@@ -142,6 +149,15 @@ export function AdminDashboard() {
     onSuccess: refreshAll,
   });
 
+  const aiCopyMutation = useMutation({
+    mutationFn: generateProductCopy,
+    onSuccess: (data) => {
+      setProductForm((prev) => ({ ...prev, description: data.short_description }));
+      setProductFeaturesInput(data.bullet_points.join("\n"));
+      setSeoTitle(data.seo_title);
+    },
+  });
+
   const canCreateProduct = useMemo(
     () => Boolean(productForm.name.trim() && productForm.slug.trim() && productForm.categoryId),
     [productForm],
@@ -168,6 +184,20 @@ export function AdminDashboard() {
       name: productForm.name.trim(),
       slug: productForm.slug.trim().toLowerCase(),
       description: productForm.description.trim(),
+    });
+  }
+
+  function onGenerateAICopy() {
+    const categoryName =
+      (categoriesQuery.data ?? []).find((c) => c.id === productForm.categoryId)?.name ?? "";
+
+    aiCopyMutation.mutate({
+      name: productForm.name.trim(),
+      category: categoryName,
+      features: productFeaturesInput
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean),
     });
   }
 
@@ -236,7 +266,7 @@ export function AdminDashboard() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Productos (CRUD + stock)</h2>
+        <h2 className="text-xl font-semibold">Productos (CRUD + stock + IA)</h2>
         <form className="grid gap-3 rounded-lg border p-4 md:grid-cols-4" onSubmit={onCreateProduct}>
           <input value={productForm.name} onChange={(event) => setProductForm((prev) => ({ ...prev, name: event.target.value }))} placeholder="Nombre" className="rounded-md border px-3 py-2" />
           <input value={productForm.slug} onChange={(event) => setProductForm((prev) => ({ ...prev, slug: event.target.value }))} placeholder="slug" className="rounded-md border px-3 py-2" />
@@ -255,9 +285,40 @@ export function AdminDashboard() {
             <input type="checkbox" checked={productForm.isActive} onChange={(event) => setProductForm((prev) => ({ ...prev, isActive: event.target.checked }))} />
             Activo
           </label>
+
+          <textarea
+            value={productFeaturesInput}
+            onChange={(event) => setProductFeaturesInput(event.target.value)}
+            placeholder={"Features (una por línea)\nLigero\nTranspirable\nSuela antideslizante"}
+            className="rounded-md border px-3 py-2 md:col-span-2"
+            rows={4}
+          />
+
+          <input
+            value={seoTitle}
+            onChange={(event) => setSeoTitle(event.target.value)}
+            placeholder="SEO title"
+            className="rounded-md border px-3 py-2 md:col-span-2"
+          />
+
+          <button
+            type="button"
+            className="rounded-md border px-4 py-2"
+            onClick={onGenerateAICopy}
+            disabled={!productForm.name.trim() || aiCopyMutation.isPending}
+          >
+            {aiCopyMutation.isPending ? "Generando..." : "Generar con IA"}
+          </button>
+
           <button type="submit" disabled={!canCreateProduct} className="rounded-md bg-black px-4 py-2 text-white disabled:opacity-50">
             Crear producto
           </button>
+
+          {aiCopyMutation.isError && (
+            <p className="text-sm text-red-600 md:col-span-4">
+              {(aiCopyMutation.error as Error)?.message ?? "Error generando copy con IA"}
+            </p>
+          )}
         </form>
 
         <div className="space-y-2">

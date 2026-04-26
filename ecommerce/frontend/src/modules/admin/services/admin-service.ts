@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api/api-client";
+import { ProductCopyRequest, ProductCopyResponse } from "@/modules/admin/types/ai-copy";
 import { AdminCategory, AdminOrder, AdminProduct, AdminUser } from "@/modules/admin/types";
 
 type CategoryPayload = {
@@ -84,4 +85,19 @@ export async function updateUserActive(userId: string, isActive: boolean) {
 export async function updateProductStock(productId: string, stock: number) {
   const response = await apiClient.patch<AdminProduct>(`/api/admin/products/${productId}/stock`, { stock });
   return response.data;
+}
+
+export async function generateProductCopy(payload: ProductCopyRequest) {
+  const response = await fetch("/api/ai/product-copy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.message ?? "No se pudo generar copy con IA.");
+  }
+
+  return (await response.json()) as ProductCopyResponse;
 }

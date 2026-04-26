@@ -1,0 +1,20 @@
+groups:
+  - name: ecommerce-backend-alerts
+    rules:
+      - alert: EcommerceBackendDown
+        expr: up{job="ecommerce-backend-metrics"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Ecommerce backend is down"
+          description: "Prometheus cannot scrape backend metrics for more than 2 minutes."
+
+      - alert: EcommerceHigh5xxRate
+        expr: rate(ecommerce_http_failures_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx error rate"
+          description: "The backend is producing more than 0.05 failures/sec over 5m."

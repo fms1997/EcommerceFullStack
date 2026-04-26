@@ -90,6 +90,10 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptio
 
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
     ?? throw new InvalidOperationException("Jwt options are not configured.");
+if (!builder.Environment.IsDevelopment() && jwtOptions.Key.Length < 32)
+{
+    throw new InvalidOperationException("Jwt key must be at least 32 characters in non-development environments.");
+}
 
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
@@ -159,6 +163,8 @@ if (app.Environment.IsDevelopment())
 }
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
+app.UseMiddleware<RequestMetricsMiddleware>();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
@@ -166,6 +172,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHealthChecks("/healthz");
+app.MapGet("/metrics", (RequestMetricsStore store) => Results.Text(store.ToPrometheus(), "text/plain; version=0.0.4"));
 app.MapControllers();
 
 app.Run();
